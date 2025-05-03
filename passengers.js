@@ -1,4 +1,4 @@
-import { parse } from "csv-parse/sync";
+import {parse} from "csv-parse/sync";
 
 export class Passengers {
     constructor(arr) {
@@ -10,10 +10,12 @@ export class Passengers {
         });
     }
 
-    getTotalSurvivors() {
-        const survived = this.arr.filter(f => f.Survived === '1');
-        const nonSurvived = this.arr.filter(f => f.Survived === '0');
-        return { survived, nonSurvived };
+    TotalSurvivors() {
+        return this.arr.reduce((acc, passenger) => {
+            if (Number(passenger.Survived)) acc.survived.push(passenger);
+            else acc.nonSurvived.push(passenger);
+            return acc;
+        }, {survived: [], nonSurvived: []});
     }
 
     getTotalFares() {
@@ -22,7 +24,7 @@ export class Passengers {
             .filter(f => !isNaN(f))
             .reduce((acc, cur) => acc + cur, 0);
 
-        return { total: total.toFixed(2) };
+        return {total: total.toFixed(2)};
     }
 
     getAverageFareByClass(numClass) {
@@ -41,7 +43,7 @@ export class Passengers {
     }
 
     getSurvivorQuantities() {
-        const { survived, nonSurvived } = this.getTotalSurvivors();
+        const {survived, nonSurvived} = this.TotalSurvivors();
         return {
             survivedQuan: survived.length,
             nonSurvivedQuan: nonSurvived.length
@@ -49,13 +51,20 @@ export class Passengers {
     }
 
     getDetailedSurvival() {
-        const {survived, nonSurvived} = this.getTotalSurvivors()
+        const {survived, nonSurvived} = this.TotalSurvivors()
         const survivedMen = survived.filter(f => f.Sex === 'male')
         const nonSurvivedMen = nonSurvived.filter(f => f.Sex === 'male')
         const survivedWomen = survived.filter(f => f.Sex === 'female')
         const nonSurvivedWomen = nonSurvived.filter(f => f.Sex === 'female')
-        const survivedChildren = survived.filter(f => !isNaN(Number(f.Age)) && Number(f.Age) < 18);
-        const nonSurvivedChildren = nonSurvived.filter(f => !isNaN(Number(f.Age)) && Number(f.Age) < 18);
+        const survivedChildren = survived.filter(f => {
+            const age = parseFloat(f.Age);
+            return !isNaN(age) && age > 0 && age < 18;
+        });
+
+        const nonSurvivedChildren = nonSurvived.filter(f => {
+            const age = parseFloat(f.Age);
+            return !isNaN(age) && age > 0 && age < 18;
+        });
         return {
             men: {
                 survived: survivedMen.length,
@@ -70,4 +79,5 @@ export class Passengers {
                 notSurvived: nonSurvivedChildren.length
             }
         }
-    }}
+    }
+}
