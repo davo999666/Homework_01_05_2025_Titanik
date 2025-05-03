@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import {changeDate} from "./functions.js";
+import { Passengers } from "./functions.js";
 import {calcAvrFarInClasses, calcTotalFares, calcTotalSurQuan, calculate} from "./Homework_func.js";
 
 
@@ -9,7 +9,7 @@ fs.readFile('./train.csv', 'utf8', (err, data) => {
         console.log(err);
     } else {
         const lines = data.split('\n').map(line => line.trim());
-        const passenger = changeDate(lines);
+        const passengers = changeDate(lines);
 //                            1. Calculate total fares;
         console.log(`Calculate total fares;\n${JSON.stringify(calcTotalFares(passenger))}\n`);
 //                2.Calculate average fare for 1,2,3 classes of travel;
