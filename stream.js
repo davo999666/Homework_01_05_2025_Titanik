@@ -48,35 +48,44 @@ reader.on('line', (data) => {
     if (line === 0) {
         headers = values;
     } else {
-        if (!isNaN(parseFloat(values[10]))) totalFare += parseFloat(values[10]);
-        if (values[1] === '1') {
-            totalQuanSur++;
-            if (values[5] === 'male') totalQuanSurMen++;
-            if (values[5] === 'female') totalQuanSurWomen++;
-            if (!isNaN(parseFloat(values[6])) && parseFloat(values[6]) < 18) totalQuanSurChild++;
+        const fare = parseFloat(values[10]);
+        const survived = values[1];
+        const sex = values[5];
+        const age = parseFloat(values[6]);
+        const pClass = +values[2];
+        if (!isNaN(fare)) totalFare += fare;
+
+        switch (survived) {
+            case '1':
+                totalQuanSur++;
+                if (sex === 'male') totalQuanSurMen++;
+                if (sex === 'female') totalQuanSurWomen++;
+                if (!isNaN(age) && age < 18) totalQuanSurChild++;
+                break;
+            case '0':
+                totalQuanNonSur++;
+                if (sex === 'male') totalQuanNonSurMen++;
+                if (sex === 'female') totalQuanNonSurWomen++;
+                if (!isNaN(age) && age < 18) totalQuanNonSurChild++;
+                break;
         }
-        if (values[1] === '0') {
-            totalQuanNonSur++;
-            if (values[5] === 'male') totalQuanNonSurMen++;
-            if (values[5] === 'female') totalQuanNonSurWomen++;
-            if (!isNaN(parseFloat(values[6])) && parseFloat(values[6]) < 18) totalQuanNonSurChild++;
-        }
-        if (+values[2] === 1) {
-            averageFare_1.total += parseFloat(values[10])
-            averageFare_1.count++;
-        }
-        if (+values[2] === 2) {
-            averageFare_2.total += parseFloat(values[10]);
-            averageFare_2.count++;
-        }
-        if (+values[2] === 3) {
-            averageFare_3.total += parseFloat(values[10]);
-            averageFare_3.count++;
+        switch (pClass) {
+            case 1:
+                averageFare_1.total += fare;
+                averageFare_1.count++;
+                break;
+            case 2:
+                averageFare_2.total += fare;
+                averageFare_2.count++;
+                break;
+            case 3:
+                averageFare_3.total += fare;
+                averageFare_3.count++;
+                break;
         }
     }
     line++;
-
-})
+});
 
 reader.on('close', () => {
     console.log(`Total Fare: ${totalFare.toFixed(2)}`);
