@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { Passengers } from "./functions.js";
+import { Passengers } from "./passengers.js";
 
 
 
